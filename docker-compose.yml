@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: adsonrodrigues/poc-s3
+    volumes:
+      - .:/usr/local/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+    stdin_open: true
+    tty: true
+    networks:
+      - poc-s3-network
+
+  postgres:
+    image: postgres:13
+    volumes:
+      - s3_postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root1234
+      - POSTGRES_DB=poc_s3
+    ports:
+      - 5432:5432
+    networks:
+      - poc-s3-network
+
+volumes:
+  s3_postgres_data:
+
+networks:
+  poc-s3-network:
+    name: poc-s3-network
+    driver: bridge
